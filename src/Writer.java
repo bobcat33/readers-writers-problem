@@ -13,9 +13,7 @@ public class Writer extends ConcurrentObject {
 
     @Override
     public void run() {
-        System.out.println("Writer " + writerNo + " awaiting rw_mutex...");
         wait(rw_mutex);
-        System.out.println("Writer " + writerNo + " received rw_mutex...");
 
         System.out.println("Writing with writer " + writerNo);
         try {
@@ -27,7 +25,6 @@ public class Writer extends ConcurrentObject {
         System.out.println("Finished writing with writer " + writerNo);
 
         signal(rw_mutex);
-        System.out.println("Writer " + writerNo + " released rw_mutex");
     }
 
 }

@@ -12,14 +12,10 @@ public class Reader extends ConcurrentObject {
 
     @Override
     public void run() {
-        System.out.println("Reader " + readerNo + " started.");
         wait(mutex);
-        System.out.println("Reader " + readerNo + " in lock for mutex");
         incrementReaders();
         if (readers == 1) {
-            System.out.println("Reader " + readerNo + " awaiting rw_mutex...");
             wait(rw_mutex);
-            System.out.println("Reader " + readerNo + " received rw_mutex...");
         }
         signal(mutex);
 
@@ -35,9 +31,7 @@ public class Reader extends ConcurrentObject {
         wait(mutex);
         decrementReaders();
         if (readers == 0) {
-            System.out.println("Reader " + readerNo + " releasing rw_mutex...");
             signal(rw_mutex);
-            System.out.println("Reader " + readerNo + " released rw_mutex");
         }
         signal(mutex);
     }
