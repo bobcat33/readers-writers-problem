@@ -1,24 +1,21 @@
 public class Reader extends ConcurrentObject {
-    private static int maxReaderNo = 0;
-
-    private static int readers = 0;
-
     private final int readerNo;
 
-    public Reader() {
-        readerNo = maxReaderNo++;
-    }
+    private static volatile int readers = 0;
 
     public Reader(int readerNo) {
         this.readerNo = readerNo;
     }
+
+    private synchronized void incrementReaders() { readers++; }
+    private synchronized void decrementReaders() { readers--; }
 
     @Override
     public void run() {
         System.out.println("Reader " + readerNo + " started.");
         wait(mutex);
         System.out.println("Reader " + readerNo + " in lock for mutex");
-        readers++;
+        incrementReaders();
         if (readers == 1) {
             System.out.println("Reader " + readerNo + " awaiting rw_mutex...");
             wait(rw_mutex);
@@ -36,7 +33,7 @@ public class Reader extends ConcurrentObject {
         System.out.println("Finished reading with reader " + readerNo);
 
         wait(mutex);
-        readers--;
+        decrementReaders();
         if (readers == 0) {
             System.out.println("Reader " + readerNo + " releasing rw_mutex...");
             signal(rw_mutex);
